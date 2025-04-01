@@ -1,49 +1,57 @@
--- These INSERT statements are not queried into the database yet, is just an example waiting for further data modification
+-- Start transaction
+BEGIN;
 -- Insert users
 INSERT INTO public.users (name, email, password, role)
 VALUES (
-        'John Doe',
-        'john@example.com',
-        'hashedpassword123',
+        'Admin User',
+        'admin@example.com',
+        'hashedpassword1',
         'admin'
     ),
     (
-        'Jane Smith',
-        'jane@example.com',
-        'hashedpassword456',
+        'Client User',
+        'client@example.com',
+        'hashedpassword2',
         'client'
     ),
     (
-        'Alice Johnson',
-        'alice@example.com',
-        'hashedpassword789',
+        'Seller User',
+        'seller@example.com',
+        'hashedpassword3',
         'seller'
     );
--- Insert products
+-- Insert products (assuming seller user ID is 3)
 INSERT INTO public.products (name, description, price, image_url, user_id)
 VALUES (
-        'Wireless Headphones',
-        'High-quality noise-canceling headphones.',
-        129.99,
-        'https://example.com/headphones.jpg',
+        'Product A',
+        'Description for Product A',
+        19.99,
+        'https://example.com/product-a.jpg',
         3
     ),
     (
-        'Gaming Laptop',
-        'Powerful laptop for gaming and work.',
-        1599.99,
-        'https://example.com/laptop.jpg',
+        'Product B',
+        'Description for Product B',
+        29.99,
+        'https://example.com/product-b.jpg',
         3
     ),
     (
-        'Smartwatch',
-        'Feature-packed smartwatch with health tracking.',
-        249.99,
-        'https://example.com/smartwatch.jpg',
+        'Product C',
+        'Description for Product C',
+        9.99,
+        'https://example.com/product-c.jpg',
         3
     );
--- Insert reviews
+-- Insert reviews (assuming client user ID is 2)
 INSERT INTO public.reviews (user_id, product_id, description)
-VALUES (2, 1, 'Great sound quality, very comfortable.'),
-    (2, 2, 'Super fast and reliable for gaming.'),
-    (1, 3, 'Love the health tracking features!');
+VALUES (2, 1, 'Great product! Really enjoyed it.'),
+    (2, 2, 'Not bad, but could be improved.'),
+    (2, 3, 'Excellent quality, highly recommend!');
+-- Insert orders (assuming client user ID is 2)
+INSERT INTO public.orders (user_id, product_id, date)
+VALUES (2, 1, NOW()),
+    (2, 2, NOW()),
+    (2, 3, NOW());
+-- Commit transaction
+COMMIT;
