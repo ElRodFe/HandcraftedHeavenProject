@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS public.users (
 CREATE TABLE IF NOT EXISTS public.products (
     id bigserial NOT NULL,
     name character varying(25) NOT NULL,
+    category character varying(15) NOT NULL,
     description text NOT NULL,
     price numeric(10, 2) NOT NULL,
     image_url text NOT NULL,
@@ -31,6 +32,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
     id bigserial NOT NULL,
     user_id integer NOT NULL,
     product_id integer NOT NULL,
+    quantity integer NOT NULL,
     date timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT orders_pkey PRIMARY KEY (id)
 );

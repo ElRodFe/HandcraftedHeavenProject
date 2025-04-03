@@ -21,12 +21,20 @@ VALUES (
         'seller'
     );
 -- Insert products (assuming seller user ID is 3)
-INSERT INTO public.products (name, description, price, image_url, user_id)
+INSERT INTO public.products (
+        name,
+        description,
+        price,
+        image_url,
+        category,
+        user_id
+    )
 VALUES (
         'Product A',
         'Description for Product A',
         19.99,
         'https://example.com/product-a.jpg',
+        'fibers',
         3
     ),
     (
@@ -34,6 +42,7 @@ VALUES (
         'Description for Product B',
         29.99,
         'https://example.com/product-b.jpg',
+        'ceramics',
         3
     ),
     (
@@ -41,6 +50,7 @@ VALUES (
         'Description for Product C',
         9.99,
         'https://example.com/product-c.jpg',
+        'jewelery',
         3
     );
 -- Insert reviews (assuming client user ID is 2)
@@ -49,9 +59,9 @@ VALUES (2, 1, 'Great product! Really enjoyed it.'),
     (2, 2, 'Not bad, but could be improved.'),
     (2, 3, 'Excellent quality, highly recommend!');
 -- Insert orders (assuming client user ID is 2)
-INSERT INTO public.orders (user_id, product_id, date)
-VALUES (2, 1, NOW()),
-    (2, 2, NOW()),
-    (2, 3, NOW());
+INSERT INTO public.orders (user_id, product_id, quantity, date)
+VALUES (2, 1, 1, NOW()),
+    (2, 2, 3, NOW()),
+    (2, 3, 2, NOW());
 -- Commit transaction
 COMMIT;
