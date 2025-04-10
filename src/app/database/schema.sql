@@ -5,32 +5,34 @@ DROP TYPE IF EXISTS user_role CASCADE;
 CREATE TYPE user_role AS ENUM ('admin', 'client', 'seller');
 CREATE TABLE IF NOT EXISTS public.users (
     id bigserial NOT NULL,
-    name character varying(25) NOT NULL,
+    name character varying(100) NOT NULL,
     email text NOT NULL,
-    password character varying(25) NOT NULL,
+    password character varying(100) NOT NULL,
     role user_role NOT NULL DEFAULT 'client',
     PRIMARY KEY (id)
 );
 CREATE TABLE IF NOT EXISTS public.products (
     id bigserial NOT NULL,
-    name character varying(25) NOT NULL,
+    name character varying(100) NOT NULL,
+    category character varying(15) NOT NULL,
     description text NOT NULL,
     price numeric(10, 2) NOT NULL,
     image_url text NOT NULL,
-    user_id integer NOT NULL,
+    user_id BIGINT NOT NULL,
     CONSTRAINT products_pkey PRIMARY KEY (id)
 );
 CREATE TABLE IF NOT EXISTS public.reviews (
     id bigserial NOT NULL,
-    user_id integer NOT NULL,
-    product_id integer NOT NULL,
+    user_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
     description text NOT NULL,
     CONSTRAINT reviews_pkey PRIMARY KEY (id)
 );
 CREATE TABLE IF NOT EXISTS public.orders (
     id bigserial NOT NULL,
-    user_id integer NOT NULL,
-    product_id integer NOT NULL,
+    user_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity integer NOT NULL,
     date timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT orders_pkey PRIMARY KEY (id)
 );
