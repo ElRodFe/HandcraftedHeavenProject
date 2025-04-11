@@ -61,6 +61,37 @@ export async function createProduct(product: NewProduct) {
   }
 }
 
+//Edit an existing product
+export async function updateProduct(
+  productId: number,
+  name: string,
+  category: string,
+  description: string,
+  price: number,
+  image_url: string
+) {
+  try {
+    const result = await pool.query(
+      `
+      UPDATE products
+      SET name = $1,
+          category = $2,
+          description = $3,
+          price = $4,
+          image_url = $5
+      WHERE id = $6
+      RETURNING *;
+      `,
+      [name, category, description, price, image_url, productId]
+    );
+
+    return result.rows[0]; // Returns the updated product
+  } catch (error) {
+    console.error("Error updating product:", error);
+    throw error;
+  }
+}
+
 //Delete a product
 export async function deleteProductById(productId: number) {
     try {
