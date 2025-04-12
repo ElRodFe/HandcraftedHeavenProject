@@ -1,50 +1,43 @@
-import pool from "@/app/lib/db";
+import sql from "../lib/db";
 
 // Create a new user
-export async function createUser(name: string, email: string, password: string, role: string = 'client') {
-  const result = await pool.query(
-    `
+export async function createUser(
+  name: string,
+  email: string,
+  password: string,
+  role: string = "client"
+) {
+  const result = await sql`
     INSERT INTO users (name, email, password, role)
-    VALUES ($1, $2, $3, $4)
+    VALUES (${name}, ${email}, ${password}, ${role})
     RETURNING *;
-    `,
-    [name, email, password, role]
-  );
-
-  return result.rows[0];
+  `;
+  return result[0];
 }
 
 // Update a user by ID
 export async function updateUser(
-    id: number,
-    name: string,
-    email: string,
-    password: string,
-    role: string
-  ) {
-    const result = await pool.query(
-      `
-      UPDATE users
-      SET name = $1, email = $2, password = $3, role = $4
-      WHERE id = $5
-      RETURNING *;
-      `,
-      [name, email, password, role, id]
-    );
-  
-    return result.rows[0];
-  }
+  id: number,
+  name: string,
+  email: string,
+  password: string,
+  role: string
+) {
+  const result = await sql`
+    UPDATE users
+    SET name = ${name}, email = ${email}, password = ${password}, role = ${role}
+    WHERE id = ${id}
+    RETURNING *;
+  `;
+  return result[0];
+}
 
 // Delete a user by ID
 export async function deleteUser(id: number) {
-  const result = await pool.query(
-    `
+  const result = await sql`
     DELETE FROM users
-    WHERE id = $1
+    WHERE id = ${id}
     RETURNING *;
-    `,
-    [id]
-  );
-
-  return result.rows[0];
+  `;
+  return result[0];
 }

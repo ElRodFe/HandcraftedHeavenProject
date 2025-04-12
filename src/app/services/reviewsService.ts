@@ -1,15 +1,14 @@
-import pool from "@/app/lib/db";
+import sql from "../lib/db";
 
 // Get all reviews
 export async function getAllReviews() {
-  const result = await pool.query("SELECT * FROM reviews;");
-  return result.rows;
+  const result = await sql`SELECT * FROM reviews;`;
+  return result;
 }
 
 // Get reviews by product ID with user's name
 export async function getReviewsByProductId(productId: number) {
-  const result = await pool.query(
-    `
+  const result = await sql`
     SELECT 
       reviews.id,
       reviews.description,
@@ -18,22 +17,18 @@ export async function getReviewsByProductId(productId: number) {
       users.name AS username
     FROM reviews
     JOIN users ON reviews.user_id = users.id
-    WHERE reviews.product_id = $1
+    WHERE reviews.product_id = ${productId}
     ORDER BY reviews.id DESC;
-    `,
-    [productId]
-  );
-
-  return result.rows;
+  `;
+  return result;
 }
 
 // Get reviews by user ID
 export async function getReviewsByUserId(userId: number) {
-  const result = await pool.query(
-    "SELECT * FROM reviews WHERE user_id = $1;",
-    [userId]
-  );
-  return result.rows;
+  const result = await sql`
+    SELECT * FROM reviews WHERE user_id = ${userId};
+  `;
+  return result;
 }
 
 // Create a new review
@@ -42,16 +37,12 @@ export async function createReview(
   productId: number,
   description: string
 ) {
-  const result = await pool.query(
-    `
+  const result = await sql`
     INSERT INTO reviews (user_id, product_id, description)
-    VALUES ($1, $2, $3)
+    VALUES (${userId}, ${productId}, ${description})
     RETURNING *;
-    `,
-    [userId, productId, description]
-  );
-
-  return result.rows[0];
+  `;
+  return result[0];
 }
 
 // Update a review
@@ -59,25 +50,20 @@ export async function updateReview(
   reviewId: number,
   description: string
 ) {
-  const result = await pool.query(
-    `
+  const result = await sql`
     UPDATE reviews
-    SET description = $1
-    WHERE id = $2
+    SET description = ${description}
+    WHERE id = ${reviewId}
     RETURNING *;
-    `,
-    [description, reviewId]
-  );
-
-  return result.rows[0];
+  `;
+  return result[0];
 }
 
 // Delete a review
 export async function deleteReview(reviewId: number) {
-  const result = await pool.query(
-    "DELETE FROM reviews WHERE id = $1 RETURNING *;",
-    [reviewId]
-  );
-
-  return result.rows[0];
+  const result = await sql`
+    DELETE FROM reviews WHERE id = ${reviewId}
+    RETURNING *;
+  `;
+  return result[0];
 }
