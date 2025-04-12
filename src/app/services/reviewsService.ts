@@ -1,4 +1,4 @@
-import sql from "@/app/lib/db";
+import sql from "../lib/db";
 
 // Get all reviews
 export async function getAllReviews() {
