@@ -5,7 +5,7 @@ const Navbar: React.FC = () => {
     <nav className="navbar is-light" role="navigation" aria-label="main navigation">
       <div className="navbar-brand">
         <img src="/images/general/logo.png" alt="Logo" width={100} height={28} className="navbar-item" />
-        <a className="navbar-item has-text-weight-bold">Handcrafted Heaven</a>
+        <span className="navbar-item has-text-weight-bold">Handcrafted Heaven</span>
       </div>
 
       <div className="navbar-menu">
