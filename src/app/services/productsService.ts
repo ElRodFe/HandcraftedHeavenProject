@@ -1,67 +1,65 @@
-import pool from "@/app/lib/db"
+import sql from "../lib/db";
 
 type NewProduct = {
-    name: string;
-    category: string;
-    description: string;
-    price: number;
-    image_url: string;
-    user_id: number;
+  name: string;
+  category: string;
+  description: string;
+  price: number;
+  image_url: string;
+  user_id: number;
 };
 
-//Get All Products
+// Get All Products
 export async function getAllProducts() {
-    try {
-      const result = await pool.query("SELECT * FROM products;");
-      return result.rows;
-    } catch (error) {
-      console.error("Error fetching all products:", error);
-      throw new Error("Could not retrieve products");
-    }
+  try {
+    const result = await sql`SELECT * FROM products;`;
+    return result;
+  } catch (error) {
+    console.error("Error fetching all products:", error);
+    throw new Error("Could not retrieve products");
   }
-  
-//Get Product By ID
+}
+
+// Get Product By ID
 export async function getProductById(productId: number) {
   try {
-    const result = await pool.query("SELECT * FROM products WHERE id = $1;", [productId]);
-    return result.rows[0] || null;
+    const result = await sql`SELECT * FROM products WHERE id = ${productId};`;
+    return result[0] || null;
   } catch (error) {
     console.error(`Error fetching product with ID ${productId}:`, error);
     throw new Error("Could not retrieve product by ID");
   }
 }
 
-//Get Product By Category
+// Get Product By Category
 export async function getProductByCategory(category: string) {
   try {
-    const result = await pool.query("SELECT * FROM products WHERE category = $1;", [category]);
-    return result.rows;
+    const result = await sql`SELECT * FROM products WHERE category = ${category};`;
+    return result;
   } catch (error) {
     console.error(`Error fetching products by category "${category}":`, error);
     throw new Error("Could not retrieve products by category");
   }
 }
 
-//Create a new product
+// Create a new product
 export async function createProduct(product: NewProduct) {
   const { name, category, description, price, image_url, user_id } = product;
 
   try {
-    const result = await pool.query(
-      `INSERT INTO products (name, category, description, price, image_url, user_id)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING *;`,
-      [name, category, description, price, image_url, user_id]
-    );
-
-    return result.rows[0];
+    const result = await sql`
+      INSERT INTO products (name, category, description, price, image_url, user_id)
+      VALUES (${name}, ${category}, ${description}, ${price}, ${image_url}, ${user_id})
+      RETURNING *;
+    `;
+    return result[0];
   } catch (error) {
     console.error("Error creating product:", error);
     throw error;
   }
 }
 
-//Edit an existing product
+// Edit an existing product
 export async function updateProduct(
   productId: number,
   name: string,
@@ -71,38 +69,33 @@ export async function updateProduct(
   image_url: string
 ) {
   try {
-    const result = await pool.query(
-      `
+    const result = await sql`
       UPDATE products
-      SET name = $1,
-          category = $2,
-          description = $3,
-          price = $4,
-          image_url = $5
-      WHERE id = $6
+      SET name = ${name},
+          category = ${category},
+          description = ${description},
+          price = ${price},
+          image_url = ${image_url}
+      WHERE id = ${productId}
       RETURNING *;
-      `,
-      [name, category, description, price, image_url, productId]
-    );
-
-    return result.rows[0]; // Returns the updated product
+    `;
+    return result[0];
   } catch (error) {
     console.error("Error updating product:", error);
     throw error;
   }
 }
 
-//Delete a product
+// Delete a product
 export async function deleteProductById(productId: number) {
-    try {
-      const result = await pool.query(
-        `DELETE FROM products WHERE id = $1 RETURNING *;`,
-        [productId]
-      );
-  
-      return result.rows[0]; // null if not found
-    } catch (error) {
-      console.error("Error deleting product:", error);
-      throw error;
-    }
+  try {
+    const result = await sql`
+      DELETE FROM products WHERE id = ${productId}
+      RETURNING *;
+    `;
+    return result[0];
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw error;
+  }
 }
