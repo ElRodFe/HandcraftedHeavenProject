@@ -7,6 +7,7 @@ import Footer from '@app/components/Footer';
 import ProductBox from '@app/components/Product';
 import { fetchProducts } from '@app/products/product'; // Import the fetchProducts function
 import { Product } from '@app/lib/definitions'; // Adjust the import path as necessary
+import Link from "next/link";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -182,10 +183,12 @@ const ProductsPage = () => {
           <div className="columns is-multiline">
             {currentProducts.map((product) => (
               <div key={product.id} className="column is-one-quarter">
-                <ProductBox
-                  {...product}
-                  onAddToCart={() => console.log(`Added ${product.name} to cart`)}
-                />
+                <Link href={`/products/${product.id}`}>
+                  <ProductBox
+                    {...product}
+                    onAddToCart={() => console.log(`Added ${product.name} to cart`)}
+                  />
+                </Link>
               </div>
             ))}
           </div>
