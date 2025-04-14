@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                       }}
                     >
                       <p className="has-text-weight-bold">{review.username}</p>
-                      <p className="is-size-7">{review.description}</p>
+                      <p className="is-size-7">{`"${review.description}"`}</p>
                     </div>
                   ))
                 ) : (
