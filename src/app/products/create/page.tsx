@@ -49,7 +49,7 @@ export default function CreateProductPage() {
 
       if (countdown === 0) {
         clearInterval(interval);
-        router.push("/login");
+        router.push("/");
       }
 
       return () => clearInterval(interval);

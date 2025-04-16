@@ -15,7 +15,7 @@ const ProductsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [priceRange, setPriceRange] = useState<[number, number]>([1, 100]); // Default range: 1 to 100
+  const [priceRange, setPriceRange] = useState<[number, number]>([1, 1000]); // Default range: 1 to 100
   const productsPerPage = 8;
 
   useEffect(() => {
@@ -151,7 +151,7 @@ const ProductsPage = () => {
                     <option value="ceramics">Ceramics</option>
                     <option value="home-goods">Home Goods</option>
                     <option value="fibers">Fibers</option>
-                    <option value="jewellery"></option>
+                    <option value="jewelry">jewelry</option>
                     {/* Add more categories as needed */}
                   </select>
                 </div>
@@ -163,7 +163,7 @@ const ProductsPage = () => {
                 <Slider
                   range
                   min={1}
-                  max={100}
+                  max={1000}
                   value={priceRange}
                   onChange={handlePriceRangeChange}
                   allowCross={false}
