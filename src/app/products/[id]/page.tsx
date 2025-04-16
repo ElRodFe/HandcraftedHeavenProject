@@ -1,16 +1,20 @@
 import { getProductById } from "@app/services/productsService";
 import { getReviewsByProductId } from "@app/services/reviewsService";
+import { getProductIdsByUserId } from "@app/services/productsService"; // Import the function to check product ownership
 import Navbar from "@app/components/Navbar";
 import Footer from "@app/components/Footer";
 import ReviewForm from "./ReviewForm"; // Import the client component
+import { cookies } from "next/headers"; // Import cookies for server-side cookie access
+import jwt from "jsonwebtoken"; // Import jsonwebtoken for decoding and verifying JWT
 import { Row } from "postgres";
+import EditButton from "@app/components/EditButton"; // Import the EditButton component
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const data = await params
   const id= data.id // Access `params.id` directly as a string
 
   try {
-    const product = await getProductById(Number(id)); // Convert `id` to a number
+    const product = await getProductById(Number(id));
     const reviews = await getReviewsByProductId(Number(id));
 
     if (!product) {
@@ -28,13 +32,38 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       );
     }
 
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
+
+    let isOwner = false;
+
+    if (token) {
+      try {
+        const decodedToken = jwt.decode(token) as { id: number };
+        const userId = decodedToken.id;
+
+        const userProductIds = await getProductIdsByUserId(userId);
+        for (const productId of userProductIds) {
+          if (productId === product.id) {
+            isOwner = true;
+            break;
+          }
+        }
+        console.log("User ID:", userId);
+        console.log("Product IDs owned by user:", userProductIds);
+        console.log("Is owner:", isOwner);
+      } catch (error) {
+        console.error("Invalid or expired token:", error);
+      }
+    }
+
     return (
       <div className="product-page">
         <Navbar />
         <section className="section">
           <div className="container">
+            {/* Product Details */}
             <div className="columns is-centered is-vcentered">
-              {/* Product Image and Description */}
               <div className="column is-half has-text-centered">
                 <figure
                   className="image is-inline-block"
@@ -49,22 +78,12 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                 </figure>
                 <p className="is-size-7 mt-4 has-text-centered">{product.description}</p>
               </div>
-
-              {/* Product Details */}
               <div className="column is-half has-text-centered">
                 <div className="box" style={{ padding: "20px" }}>
                   <h1 className="title is-4 has-text-centered">{product.name}</h1>
                   <p className="subtitle is-6 has-text-weight-bold has-text-primary has-text-centered">
                     ${product.price}
                   </p>
-
-                  {/* Add to Cart Section */}
-                  <div className="box has-text-centered" style={{ maxWidth: "300px", margin: "0 auto" }}>
-                    <p className="has-text-weight-bold is-size-7 has-text-centered">In Stock</p>
-                    <button className="button is-primary is-small is-fullwidth">
-                      Add to Cart
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -99,10 +118,11 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                   <p className="has-text-centered">No reviews yet. Be the first to review this product!</p>
                 )}
               </div>
-
-              {/* Add Review Form */}
               <ReviewForm productId={Number(id)} />
             </div>
+
+            {/* Edit Button */}
+            {isOwner && <EditButton productId={id} />}
           </div>
         </section>
         <Footer />

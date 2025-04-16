@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
+import { Row } from "postgres";
 
-export const authenticate = (handler: Function) => {
+export const authenticate = (handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void> | void) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     const token = req.headers.authorization?.split(" ")[1];
 
@@ -11,9 +12,10 @@ export const authenticate = (handler: Function) => {
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-      (req as any).user = decoded; // Attach user info to the request object
+      (req as Row).user = decoded; // Attach user info to the request object
       return handler(req, res);
     } catch (error) {
+      console.error("JWT verification error:", error);
       return res.status(401).json({ success: false, message: "Invalid token" });
     }
   };

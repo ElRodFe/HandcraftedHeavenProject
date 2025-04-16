@@ -46,6 +46,7 @@ export async function getProductByUserId(user_id: number) {
 export async function getProductIdsByUserId(user_id: number): Promise<number[]> {
   try {
     const result = await sql`SELECT id FROM products WHERE user_id = ${user_id};`;
+    console.log("Product IDs for user ID", user_id, ":", result); // Log the result for debugging
     return result.map((row) => row.id);
   } catch (error) {
     console.error(`Error fetching product IDs for user ID ${user_id}:`, error);

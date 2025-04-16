@@ -29,6 +29,7 @@ const ForgotPasswordPage: React.FC = () => {
       }
     } catch (error) {
       setMessage("An unexpected error occurred. Please try again.");
+      console.error("Error in forgot password API:", error);
     } finally {
       setIsSubmitting(false);
     }
