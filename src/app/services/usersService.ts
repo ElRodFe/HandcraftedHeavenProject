@@ -1,19 +1,20 @@
-import sql from "../lib/db";
+import sql from "@app/lib/db";
+import { User } from "@app/lib/definitions";
 
 // Create a new user
-export async function createUser(
+export const createUser = async (
   name: string,
   email: string,
   password: string,
-  role: string = "client"
-) {
-  const result = await sql`
+  role: "admin" | "client" | "seller"
+): Promise<User> => {
+  const [newUser] = await sql<User[]>`
     INSERT INTO users (name, email, password, role)
     VALUES (${name}, ${email}, ${password}, ${role})
-    RETURNING *;
+    RETURNING id, name, email, password, role
   `;
-  return result[0];
-}
+  return newUser;
+};
 
 // Update a user by ID
 export async function updateUser(
@@ -41,3 +42,23 @@ export async function deleteUser(id: number) {
   `;
   return result[0];
 }
+
+export const findUserByEmail = async (email: string): Promise<User | null> => {
+  const users = await sql<User[]>`SELECT * FROM users WHERE email = ${email}`;
+  return users.length > 0 ? users[0] : null;
+};
+
+// Update a user's password
+export const updateUserPassword = async (
+  email: string,
+  hashedPassword: string
+): Promise<void> => {
+  await sql`UPDATE users SET password = ${hashedPassword} WHERE email = ${email}`;
+};
+
+
+// Get all users
+export const getAllUsers = async (): Promise<User[]> => {
+  const users = await sql<User[]>`SELECT * FROM users`;
+  return users;
+};
